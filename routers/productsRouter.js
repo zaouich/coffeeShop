@@ -12,8 +12,10 @@ const {
 	sharpImage,
 	checkProduct,
 } = require("../controllers/productsController");
-
+const reviewsRouter = require("./reveiwsRouter");
 const router = Router();
+
+router.use("/:productId/reviews", reviewsRouter);
 
 router.route("/").get(getAllProducts);
 router.route("/:id").get(checkProduct, getOneProduct);

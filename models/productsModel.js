@@ -26,6 +26,12 @@ const productSchema = new Schema({
 		type: Number,
 		required: [true, "why no product price ?"],
 	},
+	rating: {
+		type: Number,
+	},
+	nRating: {
+		tupe: Number,
+	},
 });
 
 const Product = model("Product", productSchema);
