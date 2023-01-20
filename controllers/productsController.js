@@ -4,6 +4,7 @@ const multer = require("multer");
 const sharp = require("sharp");
 const catchAsync = require("../utils/catchAsync");
 const User = require("../models/usersModel");
+
 // password
 const checkPassword = catchAsync(async (req, next) => {
 	const user = await User.findById(req.user._id);

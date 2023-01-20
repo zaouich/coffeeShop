@@ -24,8 +24,9 @@ const reviewsSchema = new Schema({
 		ref: "Product",
 	},
 });
+reviewsSchema.index({ product: 1, user: 1 }, { unique: true });
 reviewsSchema.statics.calc = async function (productId) {
-	const avrg = await this.aggregate([
+	const avrg_ = await this.aggregate([
 		{
 			$match: {
 				product: productId,
@@ -39,17 +40,24 @@ reviewsSchema.statics.calc = async function (productId) {
 			},
 		},
 	]);
-	if (avrg.length == 0)
-		await Product.findByIdAndUpdate(productId, {
+	if (avrg_.length === 0)
+		return await Product.findByIdAndUpdate(productId, {
 			nRating: 0,
 			rating: 0,
 		});
-	await Product.findByIdAndUpdate(productId, {
-		nRating: avrg[0].nRating,
-		rating: avrg[0].avrg,
-	});
-	console.log(avrg, "**");
+	await Product.findByIdAndUpdate(
+		productId,
+		{
+			nRating: avrg_[0].nRating,
+			rating: avrg_[0].avrg,
+		},
+		{ new: true }
+	);
 };
+reviewsSchema.pre(/^find/, function (next) {
+	this.find({}).populate("user", "-password").populate("product");
+	next();
+});
 reviewsSchema.post("save", async function (doc) {
 	await doc.constructor.calc(doc.product);
 });

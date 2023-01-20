@@ -203,6 +203,7 @@ module.exports = {
 	deleteMe,
 	forgotPassword,
 	resetPassword,
+	
 	getAllUser,
 	getOneUser,
 	deleteAllUsers,

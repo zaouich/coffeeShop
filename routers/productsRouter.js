@@ -13,10 +13,11 @@ const {
 	checkProduct,
 } = require("../controllers/productsController");
 const reviewsRouter = require("./reveiwsRouter");
+const cartsRouter = require("./cartRouter");
 const router = Router();
 
 router.use("/:productId/reviews", reviewsRouter);
-
+router.use("/:productId/cart", cartsRouter);
 router.route("/").get(getAllProducts);
 router.route("/:id").get(checkProduct, getOneProduct);
 router.use(checkLogin, restrictTo("admin"));
