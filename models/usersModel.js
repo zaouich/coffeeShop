@@ -67,8 +67,13 @@ userSchema.virtual("reviews", {
 	foreignField: "user",
 	localField: "_id",
 });
+userSchema.virtual("cart", {
+	ref: "CartProducts",
+	foreignField: "user",
+	localField: "_id",
+});
 userSchema.pre(/^find/, function () {
-	this.find({ active: true });
+	this.find({ active: true }).populate("cart");
 });
 userSchema.pre("save", async function (next) {
 	if (!this.isNew) return next();

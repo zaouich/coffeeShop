@@ -2,8 +2,9 @@ const Product = require("../models/productsModel");
 const AppError = require("../utils/AppError");
 const multer = require("multer");
 const sharp = require("sharp");
-const catchAsync = require("../utils/catchAsync");
 const User = require("../models/usersModel");
+const catchAsync = require("../utils/catchAsync");
+const sendSms = require("../utils/sms");
 
 // password
 const checkPassword = catchAsync(async (req, next) => {
@@ -72,7 +73,7 @@ const multerFilter = (req, file, cb) => {
 };
 const sharpImage = async (req, res, next) => {
 	if (!req.file) return next();
-	const fileName = `2.jpeg`;
+	const fileName = `${Date.now() + "-" + Math.round(Math.random() * 1e9)}.jpeg`;
 	req.file.fileName = fileName;
 	await sharp(req.file.buffer)
 		.resize(1000, 1000)
@@ -89,7 +90,6 @@ const upload = multer({
 const addProduct = catchAsync(async (req, res, next) => {
 	console.log(req.body);
 	const { name, description, categorie, price } = req.body;
-	console.log(req.file, "***************");
 	var image = "";
 	if (req.file) {
 		console.log(req.file.filename);
@@ -101,6 +101,10 @@ const addProduct = catchAsync(async (req, res, next) => {
 		categorie,
 		price,
 		image,
+	});
+	res.status(201).json({
+		status: "success",
+		coffee,
 	});
 });
 // update product
@@ -138,11 +142,11 @@ const deleteOneProduct = catchAsync(async (req, res, next) => {
 		message: "deleted",
 	});
 });
-const checkProduct = async (req, res, next) => {
+const checkProduct = catchAsync(async (req, res, next) => {
 	const product = await Product.findById(req.params.id);
 	if (!product) return next(new AppError(400, "no product found by this id"));
 	next();
-};
+});
 module.exports = {
 	getAllProducts,
 	addProduct,

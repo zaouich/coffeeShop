@@ -3,11 +3,11 @@ const Review = require("../models/reviewsModel");
 const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 // CHECK product
-const checkProduct = async (req, res, next) => {
+const checkProduct = catchAsync(async (req, res, next) => {
 	const product = await Product.findById(req.params.productId);
 	if (!product) return next(new AppError(400, "no product found by this id"));
 	next();
-};
+});
 // check if you have a review on that product
 const checkReview = async (req, res, next) => {
 	const product = await Review.findOne({
